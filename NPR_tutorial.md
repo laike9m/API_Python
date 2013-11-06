@@ -43,9 +43,27 @@ Now, we'll introduce the powerful `requiredAssets` parameter, which forces the A
 
 Print `"DATE: "` plus `story['storyDate']['$text']`.
 
-On the next line, print `"TEASER: "` plus `story['teaser']['$text']`  
-(**注：teaser=“片头”,即新闻概要**)
+On the next line, print `"TEASER: "` plus `story['teaser']['$text']`  **(注：teaser=“片头”,即新闻概要)**
 
-On a separate line, check to see if `'byline'`(**署名**) is in story.
+On a separate line, check to see if `'byline'`**(署名)** is in story.  
+If so, print `"BYLINE: "` plus `story['byline'][0]['name']['$text']`**(打印第一个作者的名字)**
 
-If so, print `"BYLINE: "` plus `story['byline'][0]['name']['$text']`(**打印第一个作者的名字**)
+Not all stories have show (program) metadata, so we'll check that by looking for the `'show'` key.**(节目信息,如果这条新闻被直播过)**
+
+Every NPR story in the API has a web URL for its page location on NPR.org, which is contained in the `'link'` resource.**(NPR网站上该新闻的地址)**
+
+Like the byline resource, show and link have lists as their value. The show resource contains information about the air date of a story and the program name, which is `['show'][0]`.
+
+The 'link' resource always contains more than one URL, but we want the web page URL, which is the first one, `['link'][0]`.
+
+Since we required `image` and `audio` in the `requiredAssets` parameter in our API call, we won't check for those resources. But not all images have a `caption` or `credit`, so we'll use `in` to validate for those.
+
+The image resource can contain more than one image. The first one, `['image'][0]` is the primary and the one we'll be working with.
+
+Likewise, a stories audio resource may contain more than one audio file. The primary audio is given as `['audio'][0]`.
+
+Ok, now we're ready to print the story text. We won't check for it since we required `text` in our API call.
+
+Story text is given as an array of `text` objects. We need to iterate over them and print each paragraph.
+
+The Story API offers two types of text, plain text in the text resource, and text that contains HTML hyperlinks in the `textWithHtml` resource. We're going to print out the text that contains HTML formatting.

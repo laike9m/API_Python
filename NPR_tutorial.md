@@ -34,3 +34,18 @@ Try entering a few different NPR ID's:
 `5500502` : 'Krulwich Wonders...' blog    
 `2101154` : stories by Ari Shapiro  
 `93568166` : 'Monkey See' Pop Culture  
+
+<br />
+#### Working With Stories
+Now, we'll introduce the powerful `requiredAssets` parameter, which forces the API to only return stories that contain the specified content resources.
+
+`requiredAssets` can contain one or more of the following values, separated by a comma:`text`, `image`, or `audio`. The order isn't important. We'll require all three content resources so that we can parse all of them.
+
+Print `"DATE: "` plus `story['storyDate']['$text']`.
+
+On the next line, print `"TEASER: "` plus `story['teaser']['$text']`  
+(**注：teaser=“片头”,即新闻概要**)
+
+On a separate line, check to see if `'byline'`(**署名**) is in story.
+
+If so, print `"BYLINE: "` plus `story['byline'][0]['name']['$text']`(**打印第一个作者的名字**)

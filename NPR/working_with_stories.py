@@ -1,5 +1,4 @@
 import requests
-from json import load 
 
 #base url + the apiKey param
 url = 'http://api.npr.org/query?apiKey=' 
@@ -36,8 +35,8 @@ for story in json_obj['list']['story']:
     print("MP3 AUDIO: " + story['audio'][0]['format']['mp3'][0]['$text'] + "\n")
     
     # loop through and print each paragraph, this is textwithhtml
-    for paragraph in story['textWithHtml']['paragraph']:
-        print(paragraph['$text'] + " \n")
+    #for paragraph in story['textWithHtml']['paragraph']:
+        #print(paragraph['$text'] + " \n")
     
     # print plain text, this is what we need
     for p in story['text']['paragraph']:

@@ -67,3 +67,42 @@ Ok, now we're ready to print the story text. We won't check for it since we requ
 Story text is given as an array of `text` objects. We need to iterate over them and print each paragraph.
 
 The Story API offers two types of text, plain text in the text resource, and text that contains HTML hyperlinks in the `textWithHtml` resource. We're going to print out the text that contains HTML formatting.
+
+<br />
+#### Custom Feeds and Podcasts
+The Story API also makes it a snap to create custom RSS and podcast feeds.
+
+In fact, one of the very first apps built on top of the Story API was the "Mix Your Own Podcast" generator (Fun fact: the team wanted to call it "Roll Your Own Podcast", but the metaphor didn't fly.)
+
+We're going to make a simple version of that very same app. Let's start by making a custom podcast of music topic stories that contain the word "banjo".
+
+Here's something you didn't know: the `id` parameter can accept more than one value!
+
+We'll allow the user to specify more than one NPR ID, delimited by commas, to blend many kinds of stories together into a custom podcast.
+
+When we query against more than one ID, **the API's default action is to perform an `And` (intersection) and only return stories that belong to every topic specified**. We want stories that match one or more of the topic IDs we include, so we'll **set the `action` parameter to `Or` to perform a Union**.
+
+We haven't learned how to query the API by search string yet, but for now let's ask for user input and make sure we have at least either a list of IDs or a search string to work with.
+
+Finally, we're going to introduce yet another query parameter that is excellent for building custom fields. The `title` parameter lets you -- wait for it -- specify a custom title for your podcast or RSS feed.
+
+We need to check to see if the user passed one or more NPR IDs as a comma-delimited string, and if so, we need to append `'&id='` plus the NPR ID(s) to the end of our API call.
+
+We also need to check whether the user gave us a `search_string`. If so, we'll call `quote()` on the search string to escape any spaces or special characters. Then, we'll append the search string to our `url` query string as the value of `'&searchTerm='`.
+
+Finally, there's the title we stored in `feed_title`. The XML title element is what displays when you're looking at an RSS reader, smart phone, or mp3 player, so it's really useful. Title is an optional parameter in the Story API. We'll need to use `quote()` to escape `feed_title` too. If we have a title we'll append it to `url` as the value of `&title=`
+
+Now let's make some custom podcasts! Your code will prompt you for NPR IDs. You can choose some of the ones below or pick a few from the <a href='http://www.npr.org/api/mappingCodes.php'>mapping index.</a>  
+`1001`: News main topic    
+`1004`: World topic    
+`1032`: Books topic  
+`1039` : NPR Music  
+`1128` : Health topic  
+`1014`: Politics topic  
+`13` : 'Fresh Air' program  
+`94427042` : 'Planet Money'  
+`3850482` : stories by Neda Ulaby  
+
+We can easily modify our app to output an RSS feed with a few minor edits. We'll want stories with text. The Story API also exports valid RSS XML.
+
+Edit the `url` we use to call the API.Change the output format to `rss`.Instead of requiring stories with audio, require stories with text.Hit Save & Submit Code and follow the prompts to output your valid RSS feed XML.

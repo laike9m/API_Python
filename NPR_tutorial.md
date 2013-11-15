@@ -106,3 +106,27 @@ Now let's make some custom podcasts! Your code will prompt you for NPR IDs. You 
 We can easily modify our app to output an RSS feed with a few minor edits. We'll want stories with text. The Story API also exports valid RSS XML.
 
 Edit the `url` we use to call the API.Change the output format to `rss`.Instead of requiring stories with audio, require stories with text.Hit Save & Submit Code and follow the prompts to output your valid RSS feed XML.
+
+<br />
+#### The Transcripts API
+NPR produces full transcripts for many of its audio programs, and you can use the Transcripts API to retrieve those text transcripts.
+
+There are a few things you should know. First, not every story has a transcript. For stories that do have them, the transcripts aren't available until several hours after a program airs. The first version is a "rush transcript" that often contains typos. A final transcript is available hours after that.
+
+We're going to parse a transcript from May 8, 2012, when Fresh Air's Terry Gross compiled 25 years of interviews with children's book author Maurice Sendak on the day of Sendak's death.
+
+The transcript JSON is much less complex than the story JSON. If it helps you to see it, you can uncomment the three lines beginning with line 16.
+
+The Transcript API is closely related to the Story API. Here's its base URL, which ends in "transcript":
+
+`http://api.npr.org/transcript`  
+
+The Transcript API uses the same API key passed in the `apiKey` parameter. You can also request JSON via the `format` parameter.
+
+Most importantly, both the Story API and the Transcript API accept the same NPR story ID passed as the `id` parameter.
+
+Here's the NPR.org URL for the story on Maurice Sendak
+
+ `http://www.npr.org/2012/05/08/152248901/fresh-air-remembers-author-maurice-sendak`
+ 
+The NPR ID is `152248901`. This is the ID you'd use for both the Story API and the Transcript API.

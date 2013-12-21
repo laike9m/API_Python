@@ -70,14 +70,24 @@ class FetchNews():
             f.close()
     
     
-    def fetch_topic(self, topicID=None, amount=100):
+    def fetch_topic(self, topicID=None, amount=20):
+        'npr 每次最多抓20条, 所以需要设定startNum实现超过20条新闻的抓取'
         if topicID:
             if type(topicID) is int:
                 url = self.url
                 url += '&numResults=%s&format=json&id=%s&requiredAssets=text' % (amount, topicID)
                 print('Fetching topic ' + str(topicID) + '...')
                 0 if os.path.exists(str(topicID)) else os.mkdir(str(topicID))
-                self.fetch(url ,str(topicID))
+                if amount <= 20: 
+                    url = self.url + '&numResults=%s&format=json&id=%s&requiredAssets=text' % (amount, topicID)
+                    self.fetch(url ,str(topicID))
+                else:
+                    N = amount//20  # 需要抓取的次数
+                    for count in range(N):
+                        startNum = count * 20 + 1
+                        url = self.url + '&startNum=%s&numResults=20&format=json&id=%s&requiredAssets=text' % \
+                              (startNum, topicID)
+                        self.fetch(url, str(topicID))
             else:
                 print('请输入代表类别的数字ID')
         else:
@@ -86,12 +96,21 @@ class FetchNews():
                     idnum = self.topics.get(topic)    
                 except:
                     print('topic not found !')
-                url = self.url
-                url += '&numResults=%s&format=json&id=%s&requiredAssets=text' % (amount, idnum)
+                    
                 print('Fetching topic ' + topic + '...\n\n')
-                self.fetch(url ,topic)
+                
+                if amount <= 20: 
+                    url = self.url + '&numResults=%s&format=json&id=%s&requiredAssets=text' % (amount, idnum)
+                    self.fetch(url, topic)
+                else:
+                    N = amount//20  # 需要抓取的次数
+                    for count in range(N):
+                        startNum = count * 20 + 1
+                        url = self.url + '&startNum=%s&numResults=20&format=json&id=%s&requiredAssets=text' % \
+                              (startNum, idnum)
+                        self.fetch(url, topic)
                 
             
 if __name__ == '__main__':
     fetch_news = FetchNews()
-    fetch_news.fetch_topic(amount=200)  
+    fetch_news.fetch_topic(topicID=None, amount=200)  

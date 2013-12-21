@@ -1,6 +1,5 @@
 import requests
 import os
-import json
 import re
 
 class FetchNews():
@@ -10,12 +9,15 @@ class FetchNews():
     # http://www.npr.org/api/mappingCodes.php
     topics = {
         'Asia': 1125,
-        'Business': 1006,
         'Education': 1013,
         'Environment': 1025,
         'Politics': 1014,
         'Technology': 1019,
         'Sports': 1055,
+        'Economy': 1017,
+        'U.S.': 1003,
+        'Religion': 1016,
+        'Books': 1032,
     }
     
     def __init__(self):
@@ -36,7 +38,8 @@ class FetchNews():
         
         #parse our story
         for story in json_obj['list']['story']:
-            title = re.sub('\?', '', story['title']['$text'])
+            title = re.sub('\?', '', story['title']['$text'])   # 标题中的? -> '',: -> -
+            title = re.sub(':', '-', title)
             print('fetching ' + title + '...')
             f = open(os.path.join(topic, title+'.txt'), 'wt')
             f.write("TITLE: " + story['title']['$text'] + "\n")

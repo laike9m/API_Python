@@ -27,21 +27,8 @@ class FetchNews():
             0 if os.path.exists(topic) else os.mkdir(topic)
 
     
-    def dump(self, title, text, topic):
-        with open(os.path.join(topic, title+'.txt'), 'wt') as f:
-            f.write(text)
-    
-    def fetch(self, url ,topic):
-        #open our url, load the JSON
-        response = requests.get(url)
-        json_obj = response.json()
-        
-        #parse our story
-        for story in json_obj['list']['story']:
-            title = re.sub('\?', '', story['title']['$text'])   # 标题中的? -> '',: -> -
-            title = re.sub(':', '-', title)
-            print('fetching ' + title + '...')
-            f = open(os.path.join(topic, title+'.txt'), 'wt')
+    def dump(self, f, story, full_info=False):
+        if full_info:
             f.write("TITLE: " + story['title']['$text'] + "\n")
             f.write("DATE: "    + story['storyDate']['$text'] + "\n")
             f.write("TEASER:"    + story['teaser']['$text'] + "\n")
@@ -53,42 +40,58 @@ class FetchNews():
                 f.write("PROGRAM: " + story['show'][0]['program']['$text'] + "\n")
             
             f.write("NPR URL: " + story['link'][0]['$text'] + "\n")
-            #print("IMAGE: " + story['image'][0]['src'] + "\n")
-            
+
             if 'caption' in story:
                 f.write("IMAGE CAPTION: ", story['image'][0]['caption']['$text'] + "\n")
             
             if 'producer' in story:
                 f.write("IMAGE CREDIT: " + story['image'][0]['producer']['$text'] + "\n")
-            
-            
-            # loop through and print each paragraph, this is textwithhtml
-            #for paragraph in story['textWithHtml']['paragraph']:
-                #print(paragraph['$text'] + " \n")
-            
-            # print plain text, this is what we need
-            
-            for p in story['text']['paragraph']:
-                try:
-                    f.write(p['$text'] + ' \n')
-                except KeyError:
-                    pass    # 有的段就是一个数字
-            
+
+        for p in story['text']['paragraph']:
+            try:
+                f.write(p['$text'] + '\n')
+            except KeyError:
+                pass    # 有的段就是一个数字
+    
+    
+    
+    def fetch(self, url ,topic):
+        #open our url, load the JSON
+        response = requests.get(url)
+        json_obj = response.json()
+        
+        #parse our story
+        for story in json_obj['list']['story']:
+            title = re.sub('\?', '', story['title']['$text'])   # 标题中的? -> '',: -> -
+            title = re.sub(':', '-', title)
+            print('fetching ' + title + '...')
+            f = open(os.path.join(topic, title+'.txt'), 'wt', encoding='utf-8')
+            self.dump(f, story)
             f.close()
     
     
-    def fetch_topic(self, topic, amount=10):
-        for topic in self.topics.keys():
-            try:
-                idnum = self.topics.get(topic)    
-            except:
-                print('topic not found !')
-            url = self.url
-            url += '&numResults=%s&format=json&id=%s&requiredAssets=text' % (amount, idnum)
-            print('Fetching topic ' + topic + '...')
-            self.fetch(url ,topic)
-            
+    def fetch_topic(self, topicID=None, amount=100):
+        if topicID:
+            if type(topicID) is int:
+                url = self.url
+                url += '&numResults=%s&format=json&id=%s&requiredAssets=text' % (amount, topicID)
+                print('Fetching topic ' + str(topicID) + '...')
+                0 if os.path.exists(str(topicID)) else os.mkdir(str(topicID))
+                self.fetch(url ,str(topicID))
+            else:
+                print('请输入代表类别的数字ID')
+        else:
+            for topic in self.topics.keys():
+                try:
+                    idnum = self.topics.get(topic)    
+                except:
+                    print('topic not found !')
+                url = self.url
+                url += '&numResults=%s&format=json&id=%s&requiredAssets=text' % (amount, idnum)
+                print('Fetching topic ' + topic + '...\n\n')
+                self.fetch(url ,topic)
+                
             
 if __name__ == '__main__':
     fetch_news = FetchNews()
-    fetch_news.fetch_topic('Asia', 10)  
+    fetch_news.fetch_topic(amount=200)  

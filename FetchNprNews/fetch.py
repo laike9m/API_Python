@@ -7,6 +7,7 @@ class FetchNews():
     url = 'http://api.npr.org/query?apiKey=' 
     key = 'MDEyNTM0MTI5MDEzODM2NjY1NzgxODZlOQ001'
     # http://www.npr.org/api/mappingCodes.php
+    
     topics = {
         'Asia': 1125,
         'Education': 1013,
@@ -62,7 +63,8 @@ class FetchNews():
         
         #parse our story
         for story in json_obj['list']['story']:
-            title = re.sub('\?', '', story['title']['$text'])   # 标题中的? -> '',: -> -
+            title = story['title']['$text']
+            title = re.sub(r'[<>"*\\/|?]', '', title)   # 标题中的? -> '',: -> -
             title = re.sub(':', '-', title)
             print('fetching ' + title + '...')
             f = open(os.path.join(topic, title+'.txt'), 'wt', encoding='utf-8')

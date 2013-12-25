@@ -23,10 +23,37 @@ class FetchNews():
     
     def __init__(self):
         #base url + the apiKey param
-        self.url = self.url + self.key
+        self.url = self.url + self.key + '&format=json'
         for topic in self.topics.keys():
             0 if os.path.exists(topic) else os.mkdir(topic)
 
+    
+    def print_json(self, json_obj):
+        for story in json_obj['list']['story']:
+            print("TITLE: " + story['title']['$text'] + "\n")
+            print("DATE: "    + story['storyDate']['$text'] + "\n")
+            print("TEASER:"    + story['teaser']['$text'] + "\n")
+            
+            if 'byline' in story:
+                print("BYLINE: " + story['byline'][0]['name']['$text'] + "\n")
+            
+            if 'show' in story:
+                print("PROGRAM: " + story['show'][0]['program']['$text'] + "\n")
+            
+            print("NPR URL: " + story['link'][0]['$text'] + "\n")
+            print("IMAGE: " + story['image'][0]['src'] + "\n")
+            
+            if 'caption' in story:
+                print("IMAGE CAPTION: ", story['image'][0]['caption']['$text'] + "\n")
+            
+            if 'producer' in story:
+                print("IMAGE CREDIT: " + story['image'][0]['producer']['$text'] + "\n")
+            
+            print("MP3 AUDIO: " + story['audio'][0]['format']['mp3'][0]['$text'] + "\n")
+            
+            for p in story['text']['paragraph']:
+                print(p['$text'] + ' \n')
+        
     
     def dump(self, f, story, full_info=False):
         if full_info:
@@ -55,6 +82,12 @@ class FetchNews():
                 pass    # 有的段就是一个数字
     
     
+    def search(self, query):
+        '根据searchTerm进行搜索'
+        0 if os.path.exists('search_result') else os.mkdir('search_result')
+        url = self.url + query
+        self.fetch(url, 'search_result')
+        
     
     def fetch(self, url ,topic):
         #open our url, load the JSON
@@ -77,17 +110,17 @@ class FetchNews():
         if topicID:
             if type(topicID) is int:
                 url = self.url
-                url += '&numResults=%s&format=json&id=%s&requiredAssets=text' % (amount, topicID)
+                url += '&numResults=%s&id=%s&requiredAssets=text' % (amount, topicID)
                 print('Fetching topic ' + str(topicID) + '...')
                 0 if os.path.exists(str(topicID)) else os.mkdir(str(topicID))
                 if amount <= 20: 
-                    url = self.url + '&numResults=%s&format=json&id=%s&requiredAssets=text' % (amount, topicID)
+                    url = self.url + '&numResults=%s&id=%s&requiredAssets=text' % (amount, topicID)
                     self.fetch(url ,str(topicID))
                 else:
                     N = amount//20  # 需要抓取的次数
                     for count in range(N):
                         startNum = count * 20 + 1
-                        url = self.url + '&startNum=%s&numResults=20&format=json&id=%s&requiredAssets=text' % \
+                        url = self.url + '&startNum=%s&numResults=20&id=%s&requiredAssets=text' % \
                               (startNum, topicID)
                         self.fetch(url, str(topicID))
             else:
@@ -102,7 +135,7 @@ class FetchNews():
                 print('Fetching topic ' + topic + '...\n\n')
                 
                 if amount <= 20: 
-                    url = self.url + '&numResults=%s&format=json&id=%s&requiredAssets=text' % (amount, idnum)
+                    url = self.url + '&numResults=%s&id=%s&requiredAssets=text' % (amount, idnum)
                     self.fetch(url, topic)
                 else:
                     N = amount//20  # 需要抓取的次数

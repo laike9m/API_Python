@@ -86,7 +86,7 @@ class FetchNews():
         '根据searchTerm进行搜索'
         0 if os.path.exists('search_result') else os.mkdir('search_result')
         url = self.url + query
-        self.fetch(url, 'search_result')
+        return self.fetch(url, 'search_result')
         
     
     def fetch(self, url ,topic):
@@ -103,6 +103,7 @@ class FetchNews():
             f = open(os.path.join(topic, title+'.txt'), 'wt', encoding='utf-8')
             self.dump(f, story)
             f.close()
+        return os.path.join(topic, title+'.txt')
     
     
     def fetch_topic(self, topicID=None, amount=20):

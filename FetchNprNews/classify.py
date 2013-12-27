@@ -22,33 +22,38 @@ class Example(QtGui.QWidget, FetchNews):
             self.search(query)  # FetchNews method
         else:
             self.lbl.setText('请输入合法的地址')
+    
+    
+    def center(self):
+        qr = self.frameGeometry()
+        cp = QtGui.QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
+
         
     def initUI(self):      
 
         self.lbl = QtGui.QLabel(self)
-        self.qle = QtGui.QLineEdit(self)
+        self.qle = QtGui.QTextEdit(self)
         
-        self.qle.move(10, 100)
+        self.qle.move(50, 100)
         self.lbl.move(60, 40)
-        self.qle.resize(500,30)
+        self.qle.resize(300,60)
         self.qle.setText(TEST_URL)
 
-        self.qle.textChanged[str].connect(self.onChanged)
-        
         self.btn = QtGui.QPushButton('搜索&分类', self)
         self.btn.setToolTip('This is a <b>QPushButton</b> widget')
         self.btn.clicked.connect(self.search_and_classify)
         self.btn.resize(self.btn.sizeHint())
         self.btn.move(50, 50)
         
-        self.setGeometry(300, 600, 380, 170)
-        self.setWindowTitle('QtGui.QLineEdit')
+        self.setGeometry(300, 600, 400, 170)
+        self.setWindowTitle('NewsClassify')
+        self.center()
+        
+        self.setWindowIcon(QtGui.QIcon('images\\icon.png'))
         self.show()
-        
-        
-    def onChanged(self, text):
-        self.lbl.setText(text)
-        self.lbl.adjustSize()        
+              
         
         
 def main():
